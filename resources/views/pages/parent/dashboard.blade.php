@@ -90,6 +90,7 @@ new #[Layout('layouts::portal')] #[Title('Parent dashboard')] class extends Comp
                     </div>
 
                     <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-100 pt-5">
+                        <a href="{{ route('parent.children.edit', $child) }}" wire:navigate class="btn-ghost py-2 text-slate-700">Edit details</a>
                         @if ($child->hasActiveSubscription())
                             <a href="{{ route('parent.children.courses', $child) }}" wire:navigate class="btn-ghost py-2 text-brand-700">Change courses</a>
                             <a href="{{ route('parent.billing') }}" wire:navigate class="btn-ghost py-2 text-slate-700">Manage plan</a>

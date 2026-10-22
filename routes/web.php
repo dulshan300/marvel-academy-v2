@@ -125,6 +125,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::prefix('parent')->name('parent.')->middleware('role:'.Role::Parent->value)->group(function () {
         Route::livewire('/', 'pages::parent.dashboard')->name('dashboard');
         Route::livewire('/children/create', 'pages::parent.children.create')->name('children.create');
+        Route::livewire('/children/{child}/edit', 'pages::parent.children.edit')->name('children.edit');
         Route::livewire('/children/{child}/subscribe', 'pages::parent.children.subscribe')->name('children.subscribe');
         Route::livewire('/children/{child}/courses', 'pages::parent.children.courses')->name('children.courses');
         Route::livewire('/billing', 'pages::parent.billing')->name('billing');
