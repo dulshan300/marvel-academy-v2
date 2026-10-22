@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             PlanSeeder::class,
             CourseCatalogueSeeder::class,
+            PictureQuestionSeeder::class,
             WebsiteContentSeeder::class,
             DemoAccountsSeeder::class,
         ]);
