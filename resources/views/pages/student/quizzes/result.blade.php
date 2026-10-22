@@ -71,7 +71,7 @@ new #[Layout('layouts::portal')] class extends Component
     </div>
 
     @foreach ($questions as $question)
-        @php($answer = $answers->get($question->id))
+        @php $answer = $answers->get($question->id); @endphp
         <div wire:key="review-{{ $question->id }}" class="rounded-2xl border border-slate-200 bg-white p-6">
             <div class="flex items-start justify-between gap-4">
                 <p class="font-semibold text-slate-900">{{ $loop->iteration }}. {{ $question->prompt }}</p>

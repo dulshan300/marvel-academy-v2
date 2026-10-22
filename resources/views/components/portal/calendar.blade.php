@@ -24,7 +24,7 @@
     </div>
     <div class="grid grid-cols-7">
         @for ($day = $start->copy(); $day->lte($end); $day->addDay())
-            @php($daySessions = $byDay->get($day->toDateString(), collect()))
+            @php $daySessions = $byDay->get($day->toDateString(), collect()); @endphp
             <div @class([
                 'min-h-24 border-b border-r border-slate-100 p-1.5 text-xs sm:min-h-28',
                 'bg-slate-50/60 text-slate-400' => ! $day->isSameMonth($month),

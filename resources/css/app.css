@@ -46,6 +46,82 @@
     }
 }
 
+/*
+ * Student portal: larger type and a warm, low-glare palette for long
+ * screen sessions. Everything sized in rem scales with the root font.
+ */
+html.student-portal {
+    font-size: 112.5%;
+}
+
+html.student-portal body {
+    background-color: #f7f3ec;
+    color: #3d4a57;
+}
+
+html.student-portal main {
+    --color-white: #fffdf8;
+    --color-slate-50: #f5f0e8;
+    --color-slate-900: #2b3640;
+    --color-slate-800: #34414d;
+}
+
+/*
+ * Night mode: redefine the colour tokens inside the main content area so
+ * every existing utility switches to a dim, low-contrast dark theme. The
+ * sidebar is already dark and keeps its own colours.
+ */
+html.student-portal.student-night body {
+    background-color: #141c24;
+}
+
+html.student-portal.student-night main,
+html.student-portal.student-night .portal-topbar {
+    color-scheme: dark;
+    --color-white: #1c2731;
+    --color-slate-50: #18222b;
+    --color-slate-100: #233140;
+    --color-slate-200: #2d3c4b;
+    --color-slate-300: #3c4d5e;
+    --color-slate-400: #7d8c9a;
+    --color-slate-500: #9aa7b3;
+    --color-slate-600: #b3bec8;
+    --color-slate-700: #c8d1d9;
+    --color-slate-800: #d9e0e6;
+    --color-slate-900: #e4e9ed;
+    --color-brand-50: #15343b;
+    --color-brand-100: #1b4650;
+    --color-brand-200: #24606b;
+    --color-brand-300: #3f8f9b;
+    --color-brand-700: #6cc6d1;
+    --color-brand-800: #8ad3dc;
+    --color-brand-900: #a9e0e6;
+    --color-brand-950: #dcecef;
+    --color-emerald-50: #13302a;
+    --color-emerald-200: #1f5146;
+    --color-emerald-700: #7fd8bd;
+    --color-emerald-800: #9be3cc;
+    --color-amber-50: #33281a;
+    --color-amber-200: #5a4426;
+    --color-amber-700: #f0c27a;
+    --color-amber-900: #f5d29b;
+    --color-red-50: #3a1f22;
+    --color-red-200: #5e2d33;
+    --color-red-700: #f2a0a6;
+    background-color: #141c24;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
 @utility container-page {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
 }

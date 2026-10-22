@@ -65,21 +65,21 @@ new #[Layout('layouts::portal')] class extends Component
                 <iframe src="{{ $embed }}" title="{{ $session->title }}" class="size-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
             </div>
         @else
-            <div class="flex aspect-video flex-col items-center justify-center rounded-2xl bg-brand-950 p-8 text-center text-white">
+            <div class="flex aspect-video flex-col items-center justify-center rounded-3xl bg-brand-700 p-8 text-center text-white">
                 @if ($session->isJoinable() && $session->stream_url)
                     <p class="text-lg font-semibold">This lesson is live now</p>
                     <a href="{{ $session->stream_url }}" target="_blank" rel="noopener" class="btn-primary mt-5 px-8 py-3.5 text-base">Join the lesson</a>
-                    <p class="mt-3 text-sm text-brand-200">Opens in a new tab (Microsoft Teams or similar).</p>
+                    <p class="mt-3 text-base text-white/80">Opens in a new tab (Microsoft Teams or similar).</p>
                 @elseif ($session->hasEnded() && $session->recording_url)
                     <p class="text-lg font-semibold">Recording available</p>
                     <a href="{{ $session->recording_url }}" target="_blank" rel="noopener" class="btn-primary mt-5">Watch recording</a>
                 @elseif ($session->hasEnded())
                     <p class="text-lg font-semibold">This session has finished</p>
-                    <p class="mt-2 text-sm text-brand-200">The recording will appear here once it is uploaded.</p>
+                    <p class="mt-2 text-base text-white/80">The recording will appear here once it is uploaded.</p>
                 @else
-                    <p class="text-sm text-brand-200">Starts</p>
+                    <p class="text-base text-white/80">Starts</p>
                     <p class="font-display text-3xl font-extrabold">{{ $session->starts_at->format('l j F, g:ia') }}</p>
-                    <p class="mt-3 text-sm text-brand-200">The join button appears here 15 minutes before the start.</p>
+                    <p class="mt-3 text-base text-white/80">The join button appears here 15 minutes before the start.</p>
                 @endif
             </div>
         @endif

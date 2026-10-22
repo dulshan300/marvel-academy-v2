@@ -41,7 +41,7 @@ class StudentPortalTest extends TestCase
         $this->actingAs($child->student)
             ->get(route('student.dashboard'))
             ->assertOk()
-            ->assertSee('Your courses are locked');
+            ->assertSee('Your lessons are paused');
     }
 
     public function test_course_page_shows_topics_and_materials_to_enrolled_students(): void

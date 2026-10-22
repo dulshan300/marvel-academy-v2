@@ -1,7 +1,9 @@
 @props(['title' => null])
 
+@php($isStudent = auth()->user()->primaryRole() === \App\Enums\Role::Student)
+
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" @class(['student-portal' => $isStudent])>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,11 +11,37 @@
 
         <title>{{ $title ? $title.' | '.config('app.name') : config('app.name') }}</title>
 
+        @if ($isStudent)
+            <script>
+                try {
+                    if (localStorage.getItem('ma-night') === '1') document.documentElement.classList.add('student-night');
+                } catch (e) {}
+            </script>
+        @endif
+
         @fonts
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-slate-50 font-sans text-slate-700 antialiased" x-data="{ sidebar: false }">
+    <body
+        class="min-h-screen bg-slate-50 font-sans text-slate-700 antialiased"
+        x-data="{
+            sidebar: false,
+            night: false,
+            init() {
+                @if ($isStudent)
+                    try { this.night = localStorage.getItem('ma-night') === '1' } catch (e) {}
+                    document.documentElement.classList.add('student-portal');
+                    document.documentElement.classList.toggle('student-night', this.night);
+                @endif
+            },
+            toggleNight() {
+                this.night = ! this.night;
+                document.documentElement.classList.toggle('student-night', this.night);
+                try { localStorage.setItem('ma-night', this.night ? '1' : '0') } catch (e) {}
+            },
+        }"
+    >
         <div class="flex min-h-screen">
             {{-- Sidebar --}}
             <div x-show="sidebar" x-cloak class="fixed inset-0 z-40 bg-brand-950/50 lg:hidden" @click="sidebar = false"></div>
@@ -47,15 +75,29 @@
 
             {{-- Main --}}
             <div class="flex min-w-0 flex-1 flex-col">
-                <header class="sticky top-0 z-30 flex h-18 items-center gap-4 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-8">
+                <header class="portal-topbar sticky top-0 z-30 flex h-18 items-center gap-4 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-8">
                     <button type="button" class="rounded-lg p-2 text-slate-600 lg:hidden" @click="sidebar = true">
                         <span class="sr-only">Open navigation</span>
                         <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
                     </button>
                     <h1 class="truncate font-display text-xl font-extrabold text-brand-950">{{ $title }}</h1>
-                    @isset($actions)
-                        <div class="ml-auto flex items-center gap-3">{{ $actions }}</div>
-                    @endisset
+                    <div class="ml-auto flex items-center gap-3">
+                        @isset($actions)
+                            {{ $actions }}
+                        @endisset
+                        @if ($isStudent)
+                            <button
+                                type="button"
+                                @click="toggleNight()"
+                                class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                                :aria-pressed="night"
+                            >
+                                <span x-show="! night" aria-hidden="true">🌙</span>
+                                <span x-show="night" x-cloak aria-hidden="true">☀️</span>
+                                <span x-text="night ? 'Day mode' : 'Night mode'">Night mode</span>
+                            </button>
+                        @endif
+                    </div>
                 </header>
 
                 <main class="flex-1 px-4 py-8 sm:px-8">

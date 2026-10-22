@@ -168,8 +168,8 @@ new #[Layout('layouts::portal')] #[Title('Choose a plan')] class extends Compone
             <p class="mb-4 text-sm text-slate-600">Showing {{ $child->key_stage->label() }} courses for Year {{ $child->year_group }}.</p>
             <div class="grid gap-3 sm:grid-cols-2">
                 @foreach ($this->courses as $course)
-                    @php($checked = in_array($course->id, $courseIds, true))
-                    @php($disabled = ! $checked && $plan && count($courseIds) >= $plan->subjects_included)
+                    @php $checked = in_array($course->id, $courseIds, true); @endphp
+                    @php $disabled = ! $checked && $plan && count($courseIds) >= $plan->subjects_included; @endphp
                     <label wire:key="course-{{ $course->id }}" @class([
                         'flex items-center gap-3 rounded-xl border p-4 transition',
                         'border-brand-600 bg-brand-50' => $checked,
