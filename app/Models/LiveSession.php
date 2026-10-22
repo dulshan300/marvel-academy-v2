@@ -42,6 +42,39 @@ class LiveSession extends Model
         return Attribute::get(fn (): Carbon => $this->starts_at->copy()->addMinutes($this->duration_minutes));
     }
 
+    /**
+     * Whether students can join now: from 15 minutes before the start until it ends.
+     */
+    public function isJoinable(): bool
+    {
+        return $this->status !== LiveSessionStatus::Cancelled
+            && now()->between($this->starts_at->copy()->subMinutes(15), $this->ends_at);
+    }
+
+    public function hasEnded(): bool
+    {
+        return $this->status === LiveSessionStatus::Completed || $this->ends_at->isPast();
+    }
+
+    /**
+     * Privacy-enhanced embed URL for YouTube links, or null for other providers
+     * (such as Microsoft Teams), which open in a new tab instead.
+     */
+    public static function embedUrlFor(?string $url): ?string
+    {
+        if ($url === null || $url === '') {
+            return null;
+        }
+
+        $pattern = '~^https?://(?:www\.|m\.)?(?:youtube\.com/(?:watch\?(?:.*&)?v=|live/|embed/)|youtu\.be/)([A-Za-z0-9_-]{11})~';
+
+        if (preg_match($pattern, $url, $matches) !== 1) {
+            return null;
+        }
+
+        return 'https://www.youtube-nocookie.com/embed/'.$matches[1];
+    }
+
     #[Scope]
     protected function upcoming(Builder $query): void
     {

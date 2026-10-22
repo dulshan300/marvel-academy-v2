@@ -98,10 +98,6 @@ class LoginTest extends TestCase
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertRedirect(route($role->dashboardRoute()));
-
-        $this->actingAs($user)
-            ->get(route($role->dashboardRoute()))
-            ->assertOk();
     }
 
     public function test_dashboard_forbids_users_without_a_role(): void

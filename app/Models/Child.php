@@ -66,6 +66,18 @@ class Child extends Model
     }
 
     /**
+     * Whether the child may use a course: an active enrolment on a valid plan.
+     */
+    public function canAccessCourse(int $courseId): bool
+    {
+        return $this->hasActiveSubscription()
+            && $this->enrolments()
+                ->where('course_id', $courseId)
+                ->where('status', EnrolmentStatus::Active)
+                ->exists();
+    }
+
+    /**
      * Number of further courses the child's plan allows.
      */
     public function remainingCourseAllowance(): int

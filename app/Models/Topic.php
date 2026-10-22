@@ -23,6 +23,11 @@ class Topic extends Model
         return $this->belongsTo(Subject::class);
     }
 
+    public function courseId(): int
+    {
+        return $this->loadMissing('subject')->subject->course_id;
+    }
+
     /**
      * @return HasMany<Material, $this>
      */

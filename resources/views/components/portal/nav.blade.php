@@ -8,7 +8,8 @@
             ['Billing & plans', 'parent.billing', 'M3 7h18M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l2-3h14l2 3M7 15h4'],
         ],
         Role::Student => [
-            ['My learning', 'student.dashboard', 'M12 6v12m-6-6h12'],
+            ['My learning', 'student.dashboard', 'M12 6.25v13m0-13C10.8 5.5 9.2 5 7.5 5S4.2 5.5 3 6.25v13C4.2 18.5 5.8 18 7.5 18s3.3.5 4.5 1.25m0-13C13.2 5.5 14.8 5 16.5 5s3.3.5 4.5 1.25v13C19.8 18.5 18.2 18 16.5 18s-3.3.5-4.5 1.25'],
+            ['Timetable', 'student.timetable', 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z'],
         ],
         Role::Teacher => [
             ['Dashboard', 'teacher.dashboard', 'M3 12l9-9 9 9M5 10v10h14V10'],

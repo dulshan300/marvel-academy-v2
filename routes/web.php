@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterUnsubscribeController;
 use App\Http\Controllers\Parent\BillingPortalController;
 use App\Http\Controllers\Parent\CheckoutSuccessController;
+use App\Http\Controllers\Student\MaterialDownloadController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -73,6 +74,12 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     Route::prefix('student')->name('student.')->middleware('role:'.Role::Student->value)->group(function () {
-        Route::view('/', 'portal.placeholder', ['portal' => 'Student'])->name('dashboard');
+        Route::livewire('/', 'pages::student.dashboard')->name('dashboard');
+        Route::livewire('/timetable', 'pages::student.timetable')->name('timetable');
+        Route::livewire('/courses/{course}', 'pages::student.courses.show')->name('courses.show');
+        Route::livewire('/quizzes/{quiz}', 'pages::student.quizzes.take')->name('quizzes.take');
+        Route::livewire('/quizzes/{quiz}/attempts/{attempt}', 'pages::student.quizzes.result')->name('quizzes.result');
+        Route::livewire('/sessions/{session}', 'pages::student.sessions.show')->name('sessions.show');
+        Route::get('/materials/{material}', MaterialDownloadController::class)->name('materials.download');
     });
 });
