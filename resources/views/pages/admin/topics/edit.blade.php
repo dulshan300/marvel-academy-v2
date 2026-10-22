@@ -27,7 +27,7 @@ new #[Layout('layouts::portal')] class extends Component
 
     public string $materialDescription = '';
 
-    public string $materialType = 'document';
+    public string $materialType = 'pdf';
 
     public string $materialUrl = '';
 
@@ -95,7 +95,7 @@ new #[Layout('layouts::portal')] class extends Component
             'materialDescription' => ['nullable', 'string', 'max:2000'],
             'materialType' => ['required', Rule::enum(MaterialType::class)],
             'materialIsPreparatory' => ['boolean'],
-            'materialFile' => [Rule::requiredIf($type?->isFile() ?? false), 'nullable', 'file', 'max:51200', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,png,jpg,jpeg,zip'],
+            'materialFile' => [Rule::requiredIf($type?->isFile() ?? false), 'nullable', 'file', 'max:51200', 'extensions:'.implode(',', $type?->allowedExtensions() ?: ['pdf']), 'mimes:'.implode(',', $type?->allowedExtensions() ?: ['pdf'])],
             'materialUrl' => [Rule::requiredIf(! ($type?->isFile() ?? true)), 'nullable', 'url:https,http', 'max:2048'],
         ], attributes: [
             'materialTitle' => 'title',
@@ -224,7 +224,7 @@ new #[Layout('layouts::portal')] class extends Component
                     @forelse ($this->materials as $material)
                         <tr wire:key="material-{{ $material->id }}">
                             <td class="py-3">
-                                <a href="{{ route('student.materials.download', $material) }}" target="_blank" class="font-medium text-brand-700 hover:text-brand-900">{{ $material->title }}</a>
+                                <a href="{{ route('materials.download', $material) }}" target="_blank" class="font-medium text-brand-700 hover:text-brand-900">{{ $material->title }}</a>
                                 @if ($file = $material->getFirstMedia('file'))
                                     <p class="text-xs text-slate-500">{{ $file->file_name }} · {{ $file->human_readable_size }}</p>
                                 @endif
@@ -261,8 +261,8 @@ new #[Layout('layouts::portal')] class extends Component
             </div>
             <div class="md:col-span-2">
                 @if (\App\Enums\MaterialType::tryFrom($materialType)?->isFile())
-                    <label for="materialFile" class="form-label">File (max 50 MB)</label>
-                    <input id="materialFile" type="file" wire:model="materialFile" class="block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:font-semibold file:text-brand-700">
+                    <label for="materialFile" class="form-label">File ({{ strtoupper(implode(' or ', \App\Enums\MaterialType::from($materialType)->allowedExtensions())) }}, max 50 MB)</label>
+                    <input id="materialFile" type="file" wire:model="materialFile" accept="{{ collect(\App\Enums\MaterialType::from($materialType)->allowedExtensions())->map(fn ($extension) => '.'.$extension)->join(',') }}" class="block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:font-semibold file:text-brand-700">
                     <div wire:loading wire:target="materialFile" class="mt-2 text-xs text-slate-500">Uploading…</div>
                     @error('materialFile') <p class="form-error">{{ $message }}</p> @enderror
                 @else

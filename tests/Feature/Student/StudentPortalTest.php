@@ -74,7 +74,7 @@ class StudentPortalTest extends TestCase
         $child = $this->enrolledStudent($course);
 
         $this->actingAs($child->student)
-            ->get(route('student.materials.download', $material))
+            ->get(route('materials.download', $material))
             ->assertRedirect('https://example.com/pack');
     }
 
@@ -84,7 +84,7 @@ class StudentPortalTest extends TestCase
         $child = $this->enrolledStudent(Course::factory()->create());
 
         $this->actingAs($child->student)
-            ->get(route('student.materials.download', $material))
+            ->get(route('materials.download', $material))
             ->assertForbidden();
     }
 

@@ -100,11 +100,14 @@ new #[Layout('layouts::portal')] class extends Component
                                     <ul class="space-y-2">
                                         @foreach ($topic->materials as $material)
                                             <li class="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3 text-sm">
-                                                <span>
-                                                    <span class="font-medium text-slate-800">{{ $material->title }}</span>
-                                                    <span class="text-slate-500">· {{ $material->type->label() }}</span>
+                                                <span class="flex items-center gap-3">
+                                                    <span class="text-xl" aria-hidden="true">{{ $material->type->icon() }}</span>
+                                                    <span>
+                                                        <span class="font-medium text-slate-800">{{ $material->title }}</span>
+                                                        <span class="text-slate-500">· {{ $material->type->label() }}</span>
+                                                    </span>
                                                 </span>
-                                                <a href="{{ route('student.materials.download', $material) }}" target="_blank" rel="noopener" class="shrink-0 font-semibold text-brand-700 hover:text-brand-900">
+                                                <a href="{{ route('materials.download', $material) }}" target="_blank" rel="noopener" class="shrink-0 font-semibold text-brand-700 hover:text-brand-900">
                                                     {{ $material->getFirstMedia('file') ? 'Download' : 'Open' }}
                                                 </a>
                                             </li>

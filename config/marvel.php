@@ -36,4 +36,15 @@ return [
         'x' => env('MARVEL_X_URL'),
     ]),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Demo Data
+    |--------------------------------------------------------------------------
+    |
+    | Whether the catalogue seeder uploads generated PDF materials to storage.
+    |
+    */
+
+    'seed_demo_material_files' => (bool) env('SEED_DEMO_MATERIAL_FILES', true),
+
 ];

@@ -129,7 +129,7 @@ class CourseManagementTest extends TestCase
         Livewire::actingAs($this->admin)
             ->test('pages::admin.topics.edit', ['topic' => $topic])
             ->set('materialTitle', 'Question pack')
-            ->set('materialType', MaterialType::Document->value)
+            ->set('materialType', MaterialType::Pdf->value)
             ->set('materialFile', UploadedFile::fake()->create('Pack 1.pdf', 200, 'application/pdf'))
             ->set('materialIsPreparatory', true)
             ->call('addMaterial')

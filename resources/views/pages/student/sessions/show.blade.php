@@ -97,7 +97,7 @@ new #[Layout('layouts::portal')] class extends Component
             <x-portal.card title="Lesson materials">
                 <ul class="space-y-2 text-sm">
                     @foreach ($session->topic->materials as $material)
-                        <li><a href="{{ route('student.materials.download', $material) }}" target="_blank" rel="noopener" class="font-semibold text-brand-700 hover:text-brand-900">{{ $material->title }}</a></li>
+                        <li><a href="{{ route('materials.download', $material) }}" target="_blank" rel="noopener" class="font-semibold text-brand-700 hover:text-brand-900">{{ $material->title }}</a></li>
                     @endforeach
                 </ul>
             </x-portal.card>

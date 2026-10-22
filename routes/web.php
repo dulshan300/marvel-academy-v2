@@ -56,6 +56,9 @@ Route::post('/logout', LogoutController::class)->middleware('auth')->name('logou
 
 Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/materials/{material}', MaterialDownloadController::class)
+        ->middleware('throttle:60,1')
+        ->name('materials.download');
 
     Route::prefix('admin')->name('admin.')->middleware('can:access-admin')->group(function () {
         Route::livewire('/', 'pages::admin.dashboard')->name('dashboard');
@@ -124,6 +127,5 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::livewire('/quizzes/{quiz}', 'pages::student.quizzes.take')->name('quizzes.take');
         Route::livewire('/quizzes/{quiz}/attempts/{attempt}', 'pages::student.quizzes.result')->name('quizzes.result');
         Route::livewire('/sessions/{session}', 'pages::student.sessions.show')->name('sessions.show');
-        Route::get('/materials/{material}', MaterialDownloadController::class)->name('materials.download');
     });
 });
