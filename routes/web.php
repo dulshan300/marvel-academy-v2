@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Permission;
 use App\Enums\Role;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\CourseController;
@@ -55,8 +56,22 @@ Route::post('/logout', LogoutController::class)->middleware('auth')->name('logou
 Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    Route::prefix('admin')->name('admin.')->middleware('role:'.Role::Admin->value)->group(function () {
-        Route::view('/', 'portal.placeholder', ['portal' => 'Admin'])->name('dashboard');
+    Route::prefix('admin')->name('admin.')->middleware('can:access-admin')->group(function () {
+        Route::livewire('/', 'pages::admin.dashboard')->name('dashboard');
+
+        Route::middleware('permission:'.Permission::ManageCourses->value)->group(function () {
+            Route::livewire('/courses', 'pages::admin.courses.index')->name('courses.index');
+            Route::livewire('/courses/create', 'pages::admin.courses.edit')->name('courses.create');
+            Route::livewire('/courses/{course}/edit', 'pages::admin.courses.edit')->name('courses.edit');
+            Route::livewire('/topics/{topic}', 'pages::admin.topics.edit')->name('topics.edit');
+            Route::livewire('/quizzes/{quiz}', 'pages::admin.quizzes.edit')->name('quizzes.edit');
+        });
+
+        Route::middleware('permission:'.Permission::ManageLiveSessions->value)->group(function () {
+            Route::livewire('/sessions', 'pages::admin.sessions.index')->name('sessions.index');
+            Route::livewire('/sessions/create', 'pages::admin.sessions.edit')->name('sessions.create');
+            Route::livewire('/sessions/{session}/edit', 'pages::admin.sessions.edit')->name('sessions.edit');
+        });
     });
 
     Route::prefix('teacher')->name('teacher.')->middleware('role:'.Role::Teacher->value)->group(function () {

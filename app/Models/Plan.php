@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'name', 'slug', 'description', 'price_monthly', 'subjects_included', 'hours_per_month',
@@ -36,6 +37,14 @@ class Plan extends Model
     protected function active(Builder $query): void
     {
         $query->where('is_active', true)->orderBy('position')->orderBy('id');
+    }
+
+    /**
+     * @return HasMany<Child, $this>
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Child::class);
     }
 
     /**

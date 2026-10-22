@@ -5,9 +5,17 @@ namespace App\Providers;
 use App\Billing\BillingGateway;
 use App\Billing\LocalBillingGateway;
 use App\Billing\StripeBillingGateway;
+use App\Enums\Permission as StaffPermission;
+use App\Http\Middleware\EnsureUserIsActive;
+use App\Models\User;
+use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Livewire\Livewire;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +46,18 @@ class AppServiceProvider extends ServiceProvider
             $rule = Password::min(8)->letters()->numbers();
 
             return $this->app->isProduction() ? $rule->mixedCase()->uncompromised() : $rule;
+        });
+
+        Livewire::addPersistentMiddleware([
+            EnsureUserIsActive::class,
+            RoleMiddleware::class,
+            PermissionMiddleware::class,
+            Authorize::class,
+        ]);
+
+        Gate::define('access-admin', function (User $user): bool {
+            return $user->isAdmin()
+                || $user->getAllPermissions()->pluck('name')->intersect(array_column(StaffPermission::cases(), 'value'))->isNotEmpty();
         });
     }
 }
