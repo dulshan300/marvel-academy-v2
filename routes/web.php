@@ -75,7 +75,11 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     Route::prefix('teacher')->name('teacher.')->middleware('role:'.Role::Teacher->value)->group(function () {
-        Route::view('/', 'portal.placeholder', ['portal' => 'Teacher'])->name('dashboard');
+        Route::livewire('/', 'pages::teacher.dashboard')->name('dashboard');
+        Route::livewire('/schedule', 'pages::teacher.schedule')->name('schedule');
+        Route::livewire('/sessions/{session}', 'pages::teacher.sessions.show')->name('sessions.show');
+        Route::livewire('/students', 'pages::teacher.students')->name('students');
+        Route::livewire('/profile', 'pages::teacher.profile')->name('profile');
     });
 
     Route::prefix('parent')->name('parent.')->middleware('role:'.Role::Parent->value)->group(function () {

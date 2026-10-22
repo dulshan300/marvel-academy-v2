@@ -13,6 +13,8 @@ use App\Models\Plan;
 use App\Models\TeacherProfile;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class DemoAccountsSeeder extends Seeder
 {
@@ -77,12 +79,17 @@ class DemoAccountsSeeder extends Seeder
             $teacher = $course->teachers()->first() ?? $teachers->first();
             $topic = $course->topics()->first();
 
-            foreach ([2, 7, 14] as $days) {
+            // Classes run on alternate Saturdays in 2.5-hour slots.
+            $firstSaturday = now()->next(Carbon::SATURDAY);
+            $startHour = $course->subject_area === 'Mathematics' ? 10 : 13;
+
+            foreach ([0, 2, 4] as $fortnight) {
                 LiveSession::factory()->for($course)->create([
                     'topic_id' => $topic?->id,
                     'teacher_id' => $teacher->id,
-                    'title' => "{$course->title}: {$topic?->title}",
-                    'starts_at' => now()->addDays($days)->setTime(17, 30),
+                    'title' => Str::limit("{$course->title}: {$topic?->title}", 80),
+                    'starts_at' => $firstSaturday->copy()->addWeeks($fortnight)->setTime($startHour, 0),
+                    'duration_minutes' => 150,
                 ]);
             }
 

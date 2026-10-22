@@ -19,6 +19,14 @@ class LiveSessionPolicy
     }
 
     /**
+     * Update the recording and status of a session the teacher leads.
+     */
+    public function teach(User $user, LiveSession $session): bool
+    {
+        return $session->teacher_id === $user->id;
+    }
+
+    /**
      * Rate the tutor after a completed session the student attended.
      */
     public function rate(User $user, LiveSession $session): bool
