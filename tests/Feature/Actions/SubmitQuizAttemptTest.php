@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Actions;
 
+use App\Actions\Quizzes\SaveQuizAnswers;
 use App\Actions\Quizzes\StartQuizAttempt;
 use App\Actions\Quizzes\SubmitQuizAttempt;
 use App\Models\Child;
@@ -156,16 +157,22 @@ class SubmitQuizAttemptTest extends TestCase
         $this->assertTrue($first->is($second));
     }
 
-    public function test_start_replaces_an_attempt_past_its_time_limit(): void
+    public function test_attempt_past_its_time_limit_is_marked_with_its_saved_answers(): void
     {
-        $quiz = Quiz::factory()->create(['time_limit_minutes' => 10]);
+        Notification::fake();
+        [$quiz, $correct] = $this->quizWithAnswers();
+        $quiz->update(['time_limit_minutes' => 10]);
         $child = Child::factory()->create();
         $first = app(StartQuizAttempt::class)->handle($child, $quiz);
+        app(SaveQuizAnswers::class)->handle($first, array_slice($correct, 0, 2, true));
 
         $this->travel(11)->minutes();
 
-        $second = app(StartQuizAttempt::class)->handle($child, $quiz);
+        $marked = app(StartQuizAttempt::class)->handle($child, $quiz);
 
-        $this->assertFalse($first->is($second));
+        $this->assertTrue($marked->is($first));
+        $this->assertTrue($marked->isComplete());
+        $this->assertSame(2, $marked->score);
+        $this->assertFalse(app(StartQuizAttempt::class)->handle($child, $quiz)->is($first), 'The next start begins a fresh attempt.');
     }
 }

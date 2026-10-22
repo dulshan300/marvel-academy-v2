@@ -8,8 +8,14 @@ use App\Models\QuizAttempt;
 
 class StartQuizAttempt
 {
+    public function __construct(private SubmitQuizAttempt $submitAttempt) {}
+
     /**
      * Resume the child's unfinished attempt at the quiz, or begin a new one.
+     *
+     * A timed attempt whose time ran out while the child was away is marked
+     * with the answers saved so far and returned complete, so the caller can
+     * show its result instead of silently discarding the work.
      */
     public function handle(Child $child, Quiz $quiz): QuizAttempt
     {
@@ -19,8 +25,12 @@ class StartQuizAttempt
             ->latest('started_at')
             ->first();
 
-        if ($inProgress !== null && ! $this->hasExpired($inProgress, $quiz)) {
-            return $inProgress;
+        if ($inProgress !== null) {
+            if (! $inProgress->hasExpired(SaveQuizAnswers::GRACE_SECONDS)) {
+                return $inProgress;
+            }
+
+            return $this->submitAttempt->handle($inProgress, $inProgress->savedAnswers());
         }
 
         return $quiz->attempts()->create([
@@ -28,11 +38,5 @@ class StartQuizAttempt
             'max_score' => $quiz->questions()->sum('marks'),
             'started_at' => now(),
         ]);
-    }
-
-    private function hasExpired(QuizAttempt $attempt, Quiz $quiz): bool
-    {
-        return $quiz->time_limit_minutes !== null
-            && $attempt->started_at->copy()->addMinutes($quiz->time_limit_minutes)->isPast();
     }
 }

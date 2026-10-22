@@ -1,17 +1,23 @@
 <?php
 
+use App\Enums\QuestionType;
 use App\Models\Course;
 use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 new #[Layout('layouts::portal')] class extends Component
 {
+    use WithFileUploads;
+
     #[Locked]
     public Quiz $quiz;
 
@@ -27,6 +33,17 @@ new #[Layout('layouts::portal')] class extends Component
 
     /** Question being edited: null for none, 0 for a new question. */
     public ?int $editingQuestionId = null;
+
+    public string $questionType = 'text';
+
+    /** Explains the picture on picture questions. */
+    public string $questionDescription = '';
+
+    /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null */
+    public $image = null;
+
+    /** Whether the question being edited already has a stored image. */
+    public bool $hasStoredImage = false;
 
     public string $prompt = '';
 
@@ -59,7 +76,7 @@ new #[Layout('layouts::portal')] class extends Component
     #[Computed]
     public function questions(): Collection
     {
-        return $this->quiz->questions()->with('options')->get();
+        return $this->quiz->questions()->with('options', 'media')->get();
     }
 
     public function saveQuiz(): void
@@ -99,6 +116,9 @@ new #[Layout('layouts::portal')] class extends Component
 
         $this->resetQuestionForm();
         $this->editingQuestionId = $question->id;
+        $this->questionType = $question->type->value;
+        $this->questionDescription = (string) $question->description;
+        $this->hasStoredImage = $question->getFirstMedia('image') !== null;
         $this->prompt = $question->prompt;
         $this->explanation = (string) $question->explanation;
         $this->marks = $question->marks;
@@ -133,7 +153,18 @@ new #[Layout('layouts::portal')] class extends Component
     {
         $this->authorize('manage', Course::class);
 
+        $isPicture = $this->questionType === QuestionType::Picture->value;
+
         $this->validate([
+            'questionType' => ['required', Rule::enum(QuestionType::class)],
+            'questionDescription' => ['nullable', 'string', 'max:3000'],
+            'image' => [
+                Rule::requiredIf($isPicture && ! $this->hasStoredImage),
+                'nullable',
+                'image',
+                'mimes:'.implode(',', QuestionType::imageExtensions()),
+                'max:5120',
+            ],
             'prompt' => ['required', 'string', 'max:2000'],
             'explanation' => ['nullable', 'string', 'max:2000'],
             'marks' => ['required', 'integer', 'between:1,10'],
@@ -142,17 +173,33 @@ new #[Layout('layouts::portal')] class extends Component
             'correctIndex' => ['required', 'integer', 'min:0', 'lt:'.count($this->options)],
         ], [
             'correctIndex.required' => 'Mark the correct answer.',
+            'image.required' => 'Upload the picture for this question.',
             'options.*.text.distinct' => 'Each option must be different.',
         ], [
             'options.*.text' => 'option',
+            'questionDescription' => 'description',
         ]);
 
-        DB::transaction(function (): void {
+        DB::transaction(function () use ($isPicture): void {
             $question = $this->editingQuestionId
                 ? $this->quiz->questions()->findOrFail($this->editingQuestionId)
                 : $this->quiz->questions()->make(['position' => (int) $this->quiz->questions()->max('position') + 1]);
 
-            $question->fill(['prompt' => $this->prompt, 'explanation' => $this->explanation ?: null, 'marks' => $this->marks])->save();
+            $question->fill([
+                'type' => $this->questionType,
+                'description' => $isPicture ? ($this->questionDescription ?: null) : null,
+                'prompt' => $this->prompt,
+                'explanation' => $this->explanation ?: null,
+                'marks' => $this->marks,
+            ])->save();
+
+            if (! $isPicture) {
+                $question->clearMediaCollection('image');
+            } elseif ($this->image !== null) {
+                $question->addMedia($this->image->getRealPath())
+                    ->usingFileName(Str::random(24).'.'.$this->image->guessExtension())
+                    ->toMediaCollection('image');
+            }
 
             $keptIds = [];
 
@@ -232,7 +279,7 @@ new #[Layout('layouts::portal')] class extends Component
 
     private function resetQuestionForm(): void
     {
-        $this->reset('editingQuestionId', 'prompt', 'explanation', 'marks', 'options', 'correctIndex');
+        $this->reset('editingQuestionId', 'questionType', 'questionDescription', 'image', 'hasStoredImage', 'prompt', 'explanation', 'marks', 'options', 'correctIndex');
         $this->resetValidation();
     }
 };
@@ -286,6 +333,38 @@ new #[Layout('layouts::portal')] class extends Component
         @if ($editingQuestionId !== null)
             <form wire:submit="saveQuestion" class="mb-8 space-y-4 rounded-xl border-2 border-brand-200 bg-brand-50/40 p-5" novalidate>
                 <h3 class="font-semibold text-brand-950">{{ $editingQuestionId ? 'Edit question' : 'New question' }}</h3>
+                <fieldset>
+                    <legend class="form-label">Question type</legend>
+                    <div class="flex flex-wrap gap-3">
+                        @foreach (QuestionType::cases() as $type)
+                            <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm has-checked:border-brand-500 has-checked:bg-brand-50">
+                                <input type="radio" wire:model.live="questionType" value="{{ $type->value }}" class="text-brand-700">
+                                {{ $type->label() }}
+                            </label>
+                        @endforeach
+                    </div>
+                </fieldset>
+                @if ($questionType === QuestionType::Picture->value)
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label for="image" class="form-label">Picture (graph, diagram, shape…)</label>
+                            @if ($image)
+                                <img src="{{ $image->temporaryUrl() }}" alt="New picture preview" class="mb-2 max-h-48 rounded-lg border border-slate-200 bg-white object-contain">
+                            @elseif ($hasStoredImage && $editingQuestionId)
+                                <img src="{{ route('questions.image', $editingQuestionId) }}" alt="Current picture" class="mb-2 max-h-48 rounded-lg border border-slate-200 bg-white object-contain">
+                            @endif
+                            <input id="image" type="file" wire:model="image" accept="{{ collect(QuestionType::imageExtensions())->map(fn ($extension) => '.'.$extension)->join(',') }}" class="form-input py-2 text-sm">
+                            <p class="mt-1 text-xs text-slate-500">JPG, PNG, WebP or GIF up to 5 MB.{{ $hasStoredImage ? ' Leave empty to keep the current picture.' : '' }}</p>
+                            <div wire:loading wire:target="image" class="mt-1 text-xs text-slate-500">Uploading…</div>
+                            @error('image') <p class="form-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label for="questionDescription" class="form-label">Description of the picture</label>
+                            <textarea id="questionDescription" rows="6" wire:model="questionDescription" class="form-input" placeholder="e.g. The graph shows the distance a cyclist travels over 5 hours."></textarea>
+                            @error('questionDescription') <p class="form-error">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                @endif
                 <div>
                     <label for="prompt" class="form-label">Question</label>
                     <textarea id="prompt" rows="2" wire:model="prompt" class="form-input"></textarea>
@@ -330,7 +409,17 @@ new #[Layout('layouts::portal')] class extends Component
             @forelse ($this->questions as $question)
                 <li wire:key="question-{{ $question->id }}" class="rounded-xl border border-slate-200 p-4">
                     <div class="flex items-start justify-between gap-4">
-                        <p class="font-medium text-slate-800">{{ $loop->iteration }}. {{ $question->prompt }} <span class="text-xs text-slate-400">({{ $question->marks }} {{ Str::plural('mark', $question->marks) }})</span></p>
+                        <div class="flex min-w-0 gap-3">
+                            @if ($question->isPicture() && $question->getFirstMedia('image'))
+                                <img src="{{ route('questions.image', $question) }}" alt="" loading="lazy" class="size-16 shrink-0 rounded-lg border border-slate-200 bg-white object-contain">
+                            @endif
+                            <div class="min-w-0">
+                                <p class="font-medium text-slate-800">{{ $loop->iteration }}. {{ $question->prompt }} <span class="text-xs text-slate-400">({{ $question->marks }} {{ Str::plural('mark', $question->marks) }})</span></p>
+                                @if ($question->isPicture())
+                                    <x-portal.badge tone="brand" class="mt-1">Picture question</x-portal.badge>
+                                @endif
+                            </div>
+                        </div>
                         <div class="flex shrink-0 items-center gap-2 text-sm">
                             <button type="button" wire:click="moveQuestion({{ $question->id }}, -1)" class="text-slate-400 hover:text-slate-700" title="Move up">↑</button>
                             <button type="button" wire:click="moveQuestion({{ $question->id }}, 1)" class="text-slate-400 hover:text-slate-700" title="Move down">↓</button>

@@ -13,6 +13,7 @@ use App\Http\Controllers\NewsletterUnsubscribeController;
 use App\Http\Controllers\Parent\BillingPortalController;
 use App\Http\Controllers\Parent\CheckoutSuccessController;
 use App\Http\Controllers\Student\MaterialDownloadController;
+use App\Http\Controllers\Student\QuestionImageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,6 +62,9 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/materials/{material}', MaterialDownloadController::class)
         ->middleware('throttle:60,1')
         ->name('materials.download');
+    Route::get('/question-images/{question}', QuestionImageController::class)
+        ->middleware('throttle:240,1')
+        ->name('questions.image');
 
     Route::prefix('admin')->name('admin.')->middleware('can:access-admin')->group(function () {
         Route::livewire('/', 'pages::admin.dashboard')->name('dashboard');

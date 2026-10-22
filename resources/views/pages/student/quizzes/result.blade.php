@@ -36,7 +36,7 @@ new #[Layout('layouts::portal')] class extends Component
     #[Computed]
     public function questions(): Collection
     {
-        return $this->quiz->questions()->with('options')->get();
+        return $this->quiz->questions()->with('options', 'media')->get();
     }
 
     #[Computed]
@@ -81,6 +81,9 @@ new #[Layout('layouts::portal')] class extends Component
                     <x-portal.badge tone="red">{{ $answer?->question_option_id ? 'Incorrect' : 'Not answered' }}</x-portal.badge>
                 @endif
             </div>
+            @if ($question->isPicture())
+                <x-quiz.question-picture :question="$question" class="mt-4" />
+            @endif
             <ul class="mt-4 space-y-2 text-sm">
                 @foreach ($question->options as $option)
                     <li @class([

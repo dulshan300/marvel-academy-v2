@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\QuestionType;
 use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,5 +26,16 @@ class QuestionFactory extends Factory
             'marks' => 1,
             'position' => 0,
         ];
+    }
+
+    /**
+     * A picture question; attach the image with addMedia(...)->toMediaCollection('image').
+     */
+    public function picture(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => QuestionType::Picture,
+            'description' => fake()->sentence(12),
+        ]);
     }
 }
