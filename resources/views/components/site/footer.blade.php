@@ -3,11 +3,12 @@
         <div class="lg:col-span-4">
             <a href="{{ route('home') }}" class="flex items-center gap-2.5">
                 <x-site.logo class="size-9" />
-                <span class="font-display text-lg font-extrabold text-white">Marvel Academy</span>
+                <span class="font-display text-lg font-black tracking-wide text-white uppercase">Marvel Academy</span>
             </a>
             <p class="mt-4 max-w-sm text-sm leading-relaxed text-brand-200">
-                Live online tutoring for Key Stage 3 and GCSE students, taught by qualified, DBS-checked UK teachers.
+                Igniting curiosity, inspiring excellence. Live online KS3 and GCSE tuition in Maths, Biology, Chemistry and Physics, led by engineers and scientists.
             </p>
+            @if (config('marvel.social'))
             <ul class="mt-6 flex gap-3" aria-label="Social media">
                 @foreach (config('marvel.social') as $network => $url)
                     <li>
@@ -18,6 +19,7 @@
                     </li>
                 @endforeach
             </ul>
+            @endif
         </div>
 
         <nav class="lg:col-span-2" aria-label="Explore">
@@ -52,7 +54,7 @@
 
     <div class="border-t border-white/10">
         <div class="container-page flex flex-col items-center justify-between gap-4 py-6 text-xs text-brand-300 sm:flex-row">
-            <p>&copy; {{ now()->year }} Marvel Academy Ltd. All rights reserved.</p>
+            <p>&copy; {{ now()->year }} Marvel Academy. Registered in England &amp; Wales, company no. {{ config('marvel.contact.company_number') }}.</p>
             <ul class="flex gap-6">
                 <li><a href="{{ route('legal.terms') }}" class="hover:text-white">Terms &amp; Conditions</a></li>
                 <li><a href="{{ route('legal.privacy') }}" class="hover:text-white">Privacy Policy</a></li>

@@ -12,7 +12,7 @@
     <nav class="container-page flex h-18 items-center justify-between gap-6" aria-label="Main">
         <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2.5">
             <x-site.logo class="size-9" />
-            <span class="font-display text-lg font-extrabold text-brand-900">Marvel Academy</span>
+            <span class="font-display text-lg font-black tracking-wide text-brand-700 uppercase">Marvel Academy</span>
         </a>
 
         <ul class="hidden items-center gap-1 lg:flex">

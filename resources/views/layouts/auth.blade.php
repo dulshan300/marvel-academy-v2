@@ -18,7 +18,7 @@
             <div class="flex flex-col px-6 py-8 sm:px-12">
                 <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2.5">
                     <x-site.logo class="size-9" />
-                    <span class="font-display text-lg font-extrabold text-brand-900">Marvel Academy</span>
+                    <span class="font-display text-lg font-black tracking-wide text-brand-700 uppercase">Marvel Academy</span>
                 </a>
 
                 <main class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12">
@@ -32,9 +32,9 @@
                 <div class="relative flex h-full flex-col justify-end p-14 text-white">
                     <x-site.stars :rating="5" />
                     <blockquote class="mt-6 max-w-lg font-display text-2xl leading-snug font-bold">
-                        &ldquo;The weekly progress emails mean I always know exactly where my daughter is. Her Maths grade went from a 4 to a 7.&rdquo;
+                        &ldquo;Marvel Academy has been a game-changer for my child. The curriculum is engaging, the teachers are knowledgeable, and the learning environment is nurturing.&rdquo;
                     </blockquote>
-                    <p class="mt-4 text-brand-200">Sarah K., parent of a Year 10 student</p>
+                    <p class="mt-4 text-brand-200">Sarah P., parent</p>
                 </div>
             </aside>
         </div>

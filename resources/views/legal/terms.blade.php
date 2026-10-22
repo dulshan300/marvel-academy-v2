@@ -6,7 +6,7 @@
         <div class="mt-10 space-y-8 leading-relaxed text-slate-600">
             <section>
                 <h2 class="text-xl font-bold text-brand-950">1. About these terms</h2>
-                <p class="mt-3">These terms apply to subscriptions to Marvel Academy online tutoring services provided by Marvel Academy Ltd, a company registered in England and Wales. By creating an account you agree to them on behalf of yourself and any child you register.</p>
+                <p class="mt-3">These terms apply to subscriptions to Marvel Academy online tutoring services provided by Marvel Academy, a company registered in England and Wales (company no. {{ config('marvel.contact.company_number') }}), whose registered office is at {{ config('marvel.contact.address') }}. By creating an account you agree to them on behalf of yourself and any child you register.</p>
             </section>
             <section>
                 <h2 class="text-xl font-bold text-brand-950">2. Accounts</h2>

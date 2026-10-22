@@ -12,14 +12,14 @@
             <div>
                 <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-brand-100 ring-1 ring-white/15">
                     <span class="size-2 rounded-full bg-accent-400"></span>
-                    Live online tutoring for KS3 &amp; GCSE
+                    Live online KS3 &amp; GCSE tuition
                 </p>
                 <h1 class="mt-6 text-4xl leading-[1.1] font-extrabold sm:text-5xl lg:text-6xl">
-                    Confidence today.<br>
-                    <span class="text-accent-400">Top grades</span> tomorrow.
+                    Igniting curiosity.<br>
+                    <span class="text-accent-400">Inspiring excellence.</span>
                 </h1>
                 <p class="mt-6 max-w-xl text-lg leading-relaxed text-brand-100">
-                    Small-group live lessons with qualified UK teachers, topic quizzes with instant feedback, and progress updates that keep parents in the loop.
+                    Live Maths, Biology, Chemistry and Physics classes for Years 7 to 11, led by our team of highly qualified engineers and scientists. Past-paper practice, topic quizzes and progress updates for parents.
                 </p>
 
                 <div class="mt-9 flex flex-wrap gap-4">
@@ -33,12 +33,12 @@
                         <dd class="font-display text-2xl font-extrabold">KS3 &amp; GCSE</dd>
                     </div>
                     <div>
-                        <dt class="text-sm text-brand-200">Tutors</dt>
-                        <dd class="font-display text-2xl font-extrabold">DBS checked</dd>
+                        <dt class="text-sm text-brand-200">Led by</dt>
+                        <dd class="font-display text-2xl font-extrabold">40+ experts</dd>
                     </div>
                     <div>
-                        <dt class="text-sm text-brand-200">Free trial</dt>
-                        <dd class="font-display text-2xl font-extrabold">7 days</dd>
+                        <dt class="text-sm text-brand-200">From</dt>
+                        <dd class="font-display text-2xl font-extrabold">{{ Money::format(1999) }}/mo</dd>
                     </div>
                 </dl>
             </div>
@@ -48,9 +48,9 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-xs font-semibold tracking-wide text-slate-400 uppercase">Next live lesson</p>
-                            <p class="mt-1 font-display text-lg font-bold text-brand-950">GCSE Maths · Quadratic equations</p>
+                            <p class="mt-1 font-display text-lg font-bold text-brand-950">GCSE Physics · Electricity I</p>
                         </div>
-                        <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-600">LIVE 17:30</span>
+                        <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-600">LIVE SAT 10:00</span>
                     </div>
                     <div class="mt-5 aspect-video rounded-2xl bg-linear-to-br from-brand-700 to-brand-900 p-6">
                         <div class="flex h-full items-center justify-center">
@@ -87,9 +87,9 @@
 
             @php
                 $offers = [
-                    ['title' => 'Live interactive classes', 'body' => 'Small-group lessons streamed live, with Q&A and recordings to rewatch any time.', 'icon' => 'M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2Z'],
-                    ['title' => 'Topic MCQ quizzes', 'body' => 'Multiple-choice checks after every topic with instant marking and explanations.', 'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'],
-                    ['title' => 'Expert UK tutors', 'body' => 'Qualified, DBS-checked teachers who know the AQA, Edexcel and OCR specifications.', 'icon' => 'M12 14l9-5-9-5-9 5 9 5Zm0 0v6m-6-9.5v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5'],
+                    ['title' => 'Live interactive classes', 'body' => 'Each subject taught live twice a month in 2.5-hour sessions, with past-paper questions, whiteboard demos and Q&A.', 'icon' => 'M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2Z'],
+                    ['title' => 'Topic MCQ quizzes', 'body' => 'Multiple-choice checks for every module with instant marking and an explanation for each answer.', 'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'],
+                    ['title' => 'Engineers & scientists', 'body' => 'Every class is led by graduates of leading universities, chosen through a rigorous selection process.', 'icon' => 'M12 14l9-5-9-5-9 5 9 5Zm0 0v6m-6-9.5v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5'],
                     ['title' => 'Parent progress tracking', 'body' => 'Scores, attendance and upcoming sessions in your dashboard, plus regular email updates.', 'icon' => 'M3 3v18h18M7 15l4-4 3 3 5-6'],
                 ];
             @endphp
@@ -112,10 +112,10 @@
     <section id="pricing" class="scroll-mt-20 bg-slate-50 py-20 lg:py-28" aria-labelledby="pricing-heading">
         <div class="container-page">
             <x-site.section-heading eyebrow="Pricing" title="Simple, transparent pricing" id="pricing-heading">
-                Priced per child, per month. Every plan starts with a 7-day free trial and you can cancel any time.
+                Priced per child, per month, by number of subjects. Each subject includes 5 hours of live teaching a month, and every plan starts with a 7-day free trial.
             </x-site.section-heading>
 
-            <div class="mt-14 grid gap-8 lg:grid-cols-3">
+            <div class="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 @foreach ($plans as $plan)
                     <div @class([
                         'relative flex flex-col rounded-3xl p-8',
@@ -130,7 +130,7 @@
                         <p @class(['mt-2 text-sm', 'text-brand-200' => $plan->is_featured, 'text-slate-500' => ! $plan->is_featured])>{{ $plan->description }}</p>
 
                         <p class="mt-6 flex items-baseline gap-1">
-                            <span class="font-display text-5xl font-extrabold">{{ Money::format($plan->price_monthly) }}</span>
+                            <span class="font-display text-4xl font-extrabold">{{ Money::format($plan->price_monthly) }}</span>
                             <span @class(['text-sm', 'text-brand-200' => $plan->is_featured, 'text-slate-500' => ! $plan->is_featured])>/month</span>
                         </p>
                         <p @class(['mt-1 text-sm font-medium', 'text-accent-300' => $plan->is_featured, 'text-brand-700' => ! $plan->is_featured])>
@@ -154,7 +154,7 @@
             </div>
 
             <p class="mt-10 text-center text-sm text-slate-500">
-                Prefer to pay as you go? Individual subjects start from {{ Money::format(2500) }} per hour. Sibling discounts available.
+                A 10-month programme from September to June, plus look-ahead classes in July and August. Discount codes can be applied at checkout.
             </p>
         </div>
     </section>
@@ -198,7 +198,7 @@
                 <a href="{{ route('courses.index') }}" wire:navigate class="btn-secondary">View all courses</a>
             </div>
 
-            <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @forelse ($featuredCourses as $course)
                     <x-site.course-card :course="$course" wire:key="course-{{ $course->id }}" />
                 @empty

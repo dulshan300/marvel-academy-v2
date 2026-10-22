@@ -4,9 +4,10 @@
 
 @php
     $palette = match ($course->subject_area) {
-        'Mathematics' => 'from-brand-600 to-brand-800',
-        'English' => 'from-rose-500 to-rose-700',
-        'Science' => 'from-emerald-500 to-teal-700',
+        'Mathematics' => 'from-brand-500 to-brand-800',
+        'Biology' => 'from-lime-500 to-emerald-700',
+        'Chemistry' => 'from-accent-500 to-rose-600',
+        'Physics' => 'from-sky-500 to-indigo-700',
         default => 'from-slate-500 to-slate-700',
     };
     $cover = $course->getFirstMediaUrl('cover', 'card');

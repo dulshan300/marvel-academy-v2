@@ -19,8 +19,8 @@ class PublicPagesTest extends TestCase
     public static function staticPages(): array
     {
         return [
-            'how it works' => ['how-it-works', 'A learning routine that fits family life'],
-            'about us' => ['about', 'Tutor expertise standards'],
+            'how it works' => ['how-it-works', 'One module a month, mastered'],
+            'about us' => ['about', 'Pradeep De Silva'],
             'terms' => ['legal.terms', 'Terms &amp; Conditions'],
             'privacy' => ['legal.privacy', 'Privacy Policy'],
         ];

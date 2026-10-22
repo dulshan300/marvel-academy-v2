@@ -2,9 +2,9 @@
     <section class="bg-brand-950 py-16 text-white lg:py-20">
         <div class="container-page max-w-4xl text-center">
             <p class="text-sm font-semibold tracking-wide text-accent-400 uppercase">How it works</p>
-            <h1 class="mt-2 text-4xl font-extrabold sm:text-5xl">A learning routine that fits family life</h1>
+            <h1 class="mt-2 text-4xl font-extrabold sm:text-5xl">One module a month, mastered</h1>
             <p class="mx-auto mt-5 max-w-2xl text-lg text-brand-100">
-                From sign-up to exam day, here is exactly what to expect, whether you are a parent setting things up or a student joining lessons.
+                Our purpose is to keep students up to date with their work and maximise their knowledge, with intensive live sessions that combine theory and exam preparation.
             </p>
         </div>
     </section>
@@ -27,9 +27,10 @@
                 'intro' => 'A focused portal with everything you need for each lesson in one place.',
                 'steps' => [
                     ['Log in to your portal', 'Use the student login your parent set up. Your timetable shows every upcoming live session.'],
-                    ['Join live sessions', 'Click "Join live" when the session starts. Ask questions and work through problems with your tutor.'],
+                    ['Prepare with the question pack', 'Before each lesson you receive a pack of past exam questions. Try as many as you can so you know where you need help.'],
+                    ['Join live sessions', 'Click "Join live" when the session starts. Your tutor works through every question, then teaches the full theory.'],
                     ['Watch recordings', 'Missed a lesson or want a recap? Recordings are added to your course after each session.'],
-                    ['Download materials', 'Preparation guides, worksheets and notes for every topic are ready to download.'],
+                    ['Download materials', 'Question packs, lecture notes and worksheets for every module are ready to download.'],
                     ['Take topic quizzes', 'Finish each topic with a multiple-choice quiz. You get your score instantly, with explanations for every question.'],
                 ],
             ],
@@ -74,12 +75,21 @@
 
     <section class="bg-slate-50 py-16 lg:py-20">
         <div class="container-page">
-            <x-site.section-heading eyebrow="The feedback loop" title="Learn, check, improve" />
-            <div class="mt-12 grid gap-6 md:grid-cols-4">
-                @foreach ([['Live lesson', 'Taught by a subject specialist'], ['Topic quiz', 'Marked instantly'], ['Review', 'Explanations for every answer'], ['Parent update', 'Scores shared automatically']] as [$title, $body])
-                    <div class="rounded-2xl bg-white p-6 text-center ring-1 ring-slate-200">
-                        <p class="font-display text-lg font-bold text-brand-900">{{ $title }}</p>
-                        <p class="mt-1 text-sm text-slate-500">{{ $body }}</p>
+            <x-site.section-heading eyebrow="Our teaching approach" title="Theory and exam technique, together">
+                Monthly intensive classes are more effective than regular weekly tutoring, giving room to cover more material and give students an advantage over their peers.
+            </x-site.section-heading>
+
+            <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                @foreach ([
+                    ['One module a month', 'Each subject covers one module of the syllabus every month, taught live twice a month in 2.5-hour sessions on alternate Saturdays.'],
+                    ['Question pack first', 'Students receive past exam questions in advance to gauge their understanding and spot where they need to improve.'],
+                    ['Every question reviewed', 'In class, tutors work through each question and explain how to score maximum marks, then confirm understanding with a full theory lesson.'],
+                    ['Finished before exams', 'Our 10-month programme (September to June) completes the curriculum before the exams, with look-ahead classes in July and August.'],
+                ] as [$title, $body])
+                    <div class="rounded-2xl bg-white p-6 ring-1 ring-slate-200">
+                        <span class="flex size-10 items-center justify-center rounded-full bg-accent-500 font-display font-extrabold text-brand-950">{{ $loop->iteration }}</span>
+                        <h3 class="mt-4 text-lg font-bold text-brand-950">{{ $title }}</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">{{ $body }}</p>
                     </div>
                 @endforeach
             </div>

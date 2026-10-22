@@ -6,7 +6,7 @@
         <div class="mt-10 space-y-8 leading-relaxed text-slate-600">
             <section>
                 <h2 class="text-xl font-bold text-brand-950">Who we are</h2>
-                <p class="mt-3">Marvel Academy Ltd is the data controller for personal information collected through this website and our portals. We process personal data in line with the UK GDPR and the Data Protection Act 2018.</p>
+                <p class="mt-3">Marvel Academy (company no. {{ config('marvel.contact.company_number') }}) is the data controller for personal information collected through this website and our portals. We process personal data in line with the UK GDPR and the Data Protection Act 2018.</p>
             </section>
             <section>
                 <h2 class="text-xl font-bold text-brand-950">What we collect</h2>

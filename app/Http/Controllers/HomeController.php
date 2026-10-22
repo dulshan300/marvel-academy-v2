@@ -18,7 +18,7 @@ class HomeController extends Controller
                 ->orderByDesc('rating_average')
                 ->orderBy('key_stage')
                 ->orderBy('id')
-                ->limit(6)
+                ->limit(8)
                 ->get(),
             'plans' => Plan::active()->get(),
             'testimonials' => Testimonial::published()->limit(10)->get(),

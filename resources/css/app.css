@@ -5,28 +5,28 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Open Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-display: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Nunito', 'Open Sans', ui-sans-serif, system-ui, sans-serif;
 
-    /* Marvel Academy navy */
-    --color-brand-50: oklch(0.97 0.014 265);
-    --color-brand-100: oklch(0.93 0.032 265);
-    --color-brand-200: oklch(0.87 0.062 268);
-    --color-brand-300: oklch(0.78 0.1 270);
-    --color-brand-400: oklch(0.67 0.15 272);
-    --color-brand-500: oklch(0.57 0.19 274);
-    --color-brand-600: oklch(0.49 0.2 275);
-    --color-brand-700: oklch(0.42 0.18 276);
-    --color-brand-800: oklch(0.34 0.14 277);
-    --color-brand-900: oklch(0.27 0.1 278);
-    --color-brand-950: oklch(0.2 0.07 280);
+    /* Marvel Academy teal (from the existing brand) */
+    --color-brand-50: #effafb;
+    --color-brand-100: #d6f1f4;
+    --color-brand-200: #b1e3e9;
+    --color-brand-300: #7bcdd7;
+    --color-brand-400: #4cb8c5;
+    --color-brand-500: #239dac;
+    --color-brand-600: #1a7f8f;
+    --color-brand-700: #0a6375;
+    --color-brand-800: #0d5161;
+    --color-brand-900: #104453;
+    --color-brand-950: #13293d;
 
-    /* Warm accent for calls to action */
-    --color-accent-300: oklch(0.88 0.15 85);
-    --color-accent-400: oklch(0.83 0.17 78);
-    --color-accent-500: oklch(0.77 0.17 70);
-    --color-accent-600: oklch(0.67 0.16 60);
+    /* Brand orange for calls to action */
+    --color-accent-300: #ffc48f;
+    --color-accent-400: #ffa04f;
+    --color-accent-500: #ff8924;
+    --color-accent-600: #e67d21;
 }
 
 @layer base {

@@ -23,9 +23,10 @@ class DemoAccountsSeeder extends Seeder
         $this->user('admin@marvelacademy.test', 'Alex Admin', Role::Admin);
 
         $teachers = collect([
-            ['teacher@marvelacademy.test', 'Hannah Wright', 'Head of Maths', 'BSc Mathematics, PGCE', 'Mathematics'],
-            ['olu.adeyemi@marvelacademy.test', 'Olu Adeyemi', 'English Specialist', 'BA English Literature, QTS', 'English'],
-            ['mei.chen@marvelacademy.test', 'Dr Mei Chen', 'Science Lead', 'PhD Chemistry, PGCE', 'Science'],
+            ['teacher@marvelacademy.test', 'Hannah Wright', 'Mathematics Tutor', 'BEng Civil Engineering', 'Mathematics'],
+            ['olu.adeyemi@marvelacademy.test', 'Olu Adeyemi', 'Biology Tutor', 'BSc Biomedical Science', 'Biology'],
+            ['mei.chen@marvelacademy.test', 'Dr Mei Chen', 'Chemistry Tutor', 'MEng Chemical Engineering', 'Chemistry'],
+            ['tom.okafor@marvelacademy.test', 'Tom Okafor', 'Physics Tutor', 'MPhys Physics', 'Physics'],
         ])->map(function (array $teacher): User {
             [$email, $name, $headline, $qualifications, $subjectArea] = $teacher;
 
@@ -60,7 +61,7 @@ class DemoAccountsSeeder extends Seeder
             'school_name' => 'Riverside Academy',
         ]);
 
-        $gcseCourses = Course::where('key_stage', KeyStage::Gcse)->whereIn('subject_area', ['Mathematics', 'Science'])->get();
+        $gcseCourses = Course::where('key_stage', KeyStage::Gcse)->whereIn('subject_area', ['Mathematics', 'Biology'])->get();
 
         foreach ($gcseCourses as $course) {
             $child->courses()->syncWithoutDetaching([
