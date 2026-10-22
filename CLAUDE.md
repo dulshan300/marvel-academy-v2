@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-This is an essentially unmodified Laravel 13 skeleton (PHP ^8.3) for the "Marvel Academy" project. The only domain code so far is the default `User` model, the default `/` route rendering `welcome.blade.php`, and the stock users/cache/jobs migrations. It is not yet a git repository. `AGENTS.md` is a copy of the Boost block below.
+Laravel 13 (PHP ^8.3) app for "Marvel Academy", a UK online tutoring platform (public site + admin/teacher/parent/student portals), built in phases on the `develop` branch. `AGENTS.md` is a copy of the Boost block below.
+
+Domain: Course (KS3/GCSE, slugged) → Subject → Topic → Material / Quiz → Question → QuestionOption. Parents (`users`) own `children`; a child may have a `student_id` login. `enrolments` links children to courses. LiveSession, QuizAttempt, Rating, Plan, Coupon, Testimonial, Faq, NewsletterSubscriber, ContactMessage. Roles and staff permissions are enums in `app/Enums` (Spatie Permission; one portal role per user). Sensitive models expose a `ulid` route key via `App\Models\Concerns\HasPublicUlid`. Money is stored in pence. Files go through Spatie Media Library (`public` disk for images, private `s3` disk for materials).
+
+Demo logins after `php artisan migrate:fresh --seed` (password `password`): admin@, teacher@, parent@, student@marvelacademy.test.
 
 ## Commands
 
@@ -29,7 +33,7 @@ The dev machine is Windows, where `artisan dev` runs its processes through `conc
 
 - **Laravel 11+ slim structure**: no `Http/Kernel.php` or `Console/Kernel.php`. Routing, middleware and exception handling are configured in `bootstrap/app.php`. Service providers are registered in `bootstrap/providers.php`. Console commands and schedules go in `routes/console.php`. Health check is at `/up`.
 - **Exceptions** render as JSON for `api/*` paths or when the request expects JSON (`bootstrap/app.php`). There is no `routes/api.php` yet; add it with `php artisan install:api`.
-- **Database-backed infrastructure**: local `.env` uses SQLite (`database/database.sqlite`, which doesn't exist yet; it's created by `composer setup` or on first `migrate`), and sessions, cache and the queue all use the `database` driver. That means migrations must run before the app works locally, and queued jobs need a worker, which `composer dev` provides.
+- **Local services in Docker**: `docker compose up -d` starts PostgreSQL 16 (5432), Redis (6379), S3-compatible storage (9000 API / 9001 console) and Mailpit (1025 SMTP / 8025 UI). MinIO no longer publishes public images, so the `minio` service runs RustFS; `minio-setup` creates the `marvel-academy` and `marvel-academy-backups` buckets. The app itself runs on the host, so `.env` points at `127.0.0.1`. Sessions, cache and queue use Redis via `predis` (no phpredis extension); queued jobs need a worker, which `composer dev` provides.
 - **Tests** run against in-memory SQLite with array cache/session/mail and a sync queue (`phpunit.xml`). Feature tests needing a schema should use `RefreshDatabase`.
 - **Frontend**: Vite + Tailwind CSS v4 (CSS-first config: `@theme` / `@source` in `resources/css/app.css`, no `tailwind.config.js`). Entry points are `resources/css/app.css` and `resources/js/app.js`. Fonts (Instrument Sans) come from Bunny through the `laravel-vite-plugin` fonts option in `vite.config.js`.
 - **Code style**: `.editorconfig` sets 4-space indentation and LF line endings (2 spaces for YAML).

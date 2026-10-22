@@ -7,8 +7,16 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "laravel/cashier": "^16.9",
         "laravel/framework": "^13.17",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "league/flysystem-aws-s3-v3": "^3.35",
+        "livewire/livewire": "^4.0",
+        "predis/predis": "^3.7",
+        "spatie/laravel-backup": "^10.3",
+        "spatie/laravel-medialibrary": "^11.23",
+        "spatie/laravel-permission": "^8.3",
+        "spatie/laravel-sluggable": "^4.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

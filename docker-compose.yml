@@ -1,0 +1,86 @@
+name: marvel-academy
+
+services:
+  pgsql:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: "${DB_DATABASE:-marvel_academy}"
+      POSTGRES_USER: "${DB_USERNAME:-marvel}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-secret}"
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${FORWARD_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # S3-compatible object storage. MinIO no longer publishes public images,
+  # so RustFS (MinIO-compatible API and ports) stands in for it locally.
+  minio:
+    image: rustfs/rustfs:latest
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_MINIO_PORT:-9000}:9000"
+      - "${FORWARD_MINIO_CONSOLE_PORT:-9001}:9001"
+    environment:
+      RUSTFS_ACCESS_KEY: "${AWS_ACCESS_KEY_ID:-marvel}"
+      RUSTFS_SECRET_KEY: "${AWS_SECRET_ACCESS_KEY:-marvel-secret}"
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_OBS_ENVIRONMENT: development
+    volumes:
+      - minio-data:/data
+
+  minio-setup:
+    image: amazon/aws-cli:latest
+    depends_on:
+      - minio
+    restart: "no"
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-marvel}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-marvel-secret}"
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION:-eu-west-2}"
+      BUCKETS: "${AWS_BUCKET:-marvel-academy} ${BACKUP_BUCKET:-marvel-academy-backups}"
+    entrypoint: >
+      /bin/sh -c '
+      for i in $$(seq 1 30); do aws --endpoint-url http://minio:9000 s3api list-buckets >/dev/null 2>&1 && break; sleep 1; done;
+      for b in $${BUCKETS}; do aws --endpoint-url http://minio:9000 s3api head-bucket --bucket $$b 2>/dev/null || aws --endpoint-url http://minio:9000 s3 mb s3://$$b; done
+      '
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_MAILPIT_PORT:-1025}:1025"
+      - "${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025"
+    volumes:
+      - mailpit-data:/data
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+  pgsql-data:
+  redis-data:
+  minio-data:
+  mailpit-data:
