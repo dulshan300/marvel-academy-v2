@@ -9,12 +9,12 @@ use App\Models\User;
 class QuizPolicy
 {
     /**
-     * Take a published quiz in a course the student can access.
+     * Take a published quiz in a course the student can access, for their school year.
      */
     public function attempt(User $user, Quiz $quiz): bool
     {
         return $quiz->is_published
-            && ($user->studentProfile?->canAccessCourse($quiz->topic->courseId()) ?? false);
+            && ($user->studentProfile?->canAccessTopic($quiz->topic) ?? false);
     }
 
     /**

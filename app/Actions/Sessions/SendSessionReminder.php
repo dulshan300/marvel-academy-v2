@@ -36,7 +36,7 @@ class SendSessionReminder
             return null;
         }
 
-        $session->loadMissing('course', 'teacher', 'topic');
+        $session->loadMissing('course', 'teacher', 'topic.subject');
         $recipients = $this->recipients($session);
 
         foreach ($recipients as $child) {
@@ -51,7 +51,8 @@ class SendSessionReminder
     }
 
     /**
-     * Children actively enrolled on the course whose parent's plan is valid.
+     * Children actively enrolled on the course whose parent's plan is valid,
+     * limited to the school year of the session's topic when it has one.
      *
      * @return Collection<int, Child>
      */
@@ -62,6 +63,7 @@ class SendSessionReminder
                 ->where('course_id', $session->course_id)
                 ->where('status', EnrolmentStatus::Active))
             ->whereHas('parent', fn ($query) => $query->where('is_active', true))
+            ->when($session->topic?->subject?->year_group, fn ($query, int $yearGroup) => $query->where('year_group', $yearGroup))
             ->with(['parent.subscriptions', 'student'])
             ->get()
             ->filter(fn (Child $child) => $child->hasActiveSubscription())

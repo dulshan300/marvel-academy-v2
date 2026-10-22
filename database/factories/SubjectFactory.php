@@ -25,4 +25,15 @@ class SubjectFactory extends Factory
             'position' => fake()->numberBetween(0, 10),
         ];
     }
+
+    /**
+     * Limit the subject to one school year.
+     */
+    public function forYear(int $yearGroup): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'name' => "Year {$yearGroup}",
+            'year_group' => $yearGroup,
+        ]);
+    }
 }

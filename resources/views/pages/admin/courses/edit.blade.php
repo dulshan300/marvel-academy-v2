@@ -50,6 +50,8 @@ new #[Layout('layouts::portal')] class extends Component
 
     public string $newSubjectName = '';
 
+    public ?int $newSubjectYear = null;
+
     /** @var array<int, string> New topic titles keyed by subject ID. */
     public array $newTopicTitles = [];
 
@@ -154,14 +156,18 @@ new #[Layout('layouts::portal')] class extends Component
     public function addSubject(): void
     {
         $this->authorize('manage', Course::class);
-        $this->validate(['newSubjectName' => ['required', 'string', 'max:120']]);
+        $this->validate([
+            'newSubjectName' => ['required', 'string', 'max:120'],
+            'newSubjectYear' => ['nullable', 'integer', Rule::in($this->course->key_stage->years())],
+        ], attributes: ['newSubjectYear' => 'school year']);
 
         $this->course->subjects()->create([
             'name' => $this->newSubjectName,
+            'year_group' => $this->newSubjectYear,
             'position' => (int) $this->subjects->max('position') + 1,
         ]);
 
-        $this->reset('newSubjectName');
+        $this->reset('newSubjectName', 'newSubjectYear');
         unset($this->subjects);
     }
 
@@ -174,6 +180,23 @@ new #[Layout('layouts::portal')] class extends Component
         }
 
         $this->findSubject($subjectId)->update(['name' => trim($name)]);
+        unset($this->subjects);
+    }
+
+    /**
+     * Set which school year sees the subject; blank means every year in the key stage.
+     */
+    public function setSubjectYear(int $subjectId, string $year): void
+    {
+        $this->authorize('manage', Course::class);
+
+        $yearGroup = $year === '' ? null : (int) $year;
+
+        if ($yearGroup !== null && ! in_array($yearGroup, $this->course->key_stage->years(), true)) {
+            return;
+        }
+
+        $this->findSubject($subjectId)->update(['year_group' => $yearGroup]);
         unset($this->subjects);
     }
 
@@ -378,6 +401,12 @@ new #[Layout('layouts::portal')] class extends Component
                         <div wire:key="subject-{{ $subject->id }}" class="rounded-xl border border-slate-200">
                             <div class="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-3 py-2">
                                 <input type="text" value="{{ $subject->name }}" wire:change="renameSubject({{ $subject->id }}, $event.target.value)" class="min-w-0 flex-1 rounded-md border-transparent bg-transparent px-1 font-semibold text-slate-800 focus:border-brand-400 focus:bg-white" aria-label="Subject name">
+                                <select wire:change="setSubjectYear({{ $subject->id }}, $event.target.value)" class="rounded-md border-slate-200 bg-white py-1 pr-8 pl-2 text-sm text-slate-700" aria-label="School year for {{ $subject->name }}">
+                                    <option value="" @selected($subject->year_group === null)>All years</option>
+                                    @foreach ($this->course->key_stage->years() as $year)
+                                        <option value="{{ $year }}" @selected($subject->year_group === $year)>Year {{ $year }}</option>
+                                    @endforeach
+                                </select>
                                 <button type="button" wire:click="moveSubject({{ $subject->id }}, -1)" class="rounded p-1 text-slate-500 hover:bg-white" title="Move up">↑</button>
                                 <button type="button" wire:click="moveSubject({{ $subject->id }}, 1)" class="rounded p-1 text-slate-500 hover:bg-white" title="Move down">↓</button>
                                 <button type="button" wire:click="deleteSubject({{ $subject->id }})" wire:confirm="Delete {{ $subject->name }} and all its topics, materials and quizzes?" class="rounded p-1 text-red-500 hover:bg-white" title="Delete">✕</button>
@@ -403,9 +432,17 @@ new #[Layout('layouts::portal')] class extends Component
 
                     <form wire:submit="addSubject" class="flex gap-2">
                         <input type="text" wire:model="newSubjectName" placeholder="New subject, e.g. Year 7" class="form-input">
+                        <select wire:model="newSubjectYear" class="form-input w-auto shrink-0" aria-label="School year">
+                            <option value="">All years</option>
+                            @foreach ($this->course->key_stage->years() as $year)
+                                <option value="{{ $year }}">Year {{ $year }}</option>
+                            @endforeach
+                        </select>
                         <button type="submit" class="btn-secondary shrink-0">Add subject</button>
                     </form>
                     @error('newSubjectName') <p class="form-error">{{ $message }}</p> @enderror
+                    @error('newSubjectYear') <p class="form-error">{{ $message }}</p> @enderror
+                    <p class="text-xs text-slate-500">Students only see subjects for their own school year, plus any set to “All years”.</p>
                 </div>
             @endif
         </x-portal.card>

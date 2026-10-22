@@ -9,7 +9,7 @@ use App\Models\User;
 class MaterialPolicy
 {
     /**
-     * Download a course material: enrolled students, the parent, and course staff.
+     * Download a course material: enrolled students in the topic's school year, their parent, and course staff.
      */
     public function download(User $user, Material $material): bool
     {
@@ -23,10 +23,10 @@ class MaterialPolicy
             return true;
         }
 
-        if ($user->studentProfile?->canAccessCourse($courseId)) {
+        if ($user->studentProfile?->canAccessTopic($material->topic)) {
             return true;
         }
 
-        return $user->children()->get()->contains(fn ($child) => $child->canAccessCourse($courseId));
+        return $user->children()->get()->contains(fn ($child) => $child->canAccessTopic($material->topic));
     }
 }

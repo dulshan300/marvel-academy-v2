@@ -56,6 +56,7 @@ class CourseCatalogueSeeder extends Seeder
                 foreach (array_keys($yearGroups) as $subjectPosition => $yearGroup) {
                     $subject = $course->subjects()->create([
                         'name' => "Year {$yearGroup}",
+                        'year_group' => $yearGroup,
                         'description' => "{$subjectArea} modules for Year {$yearGroup}, taught September to April with revision from May.",
                         'position' => $subjectPosition,
                     ]);

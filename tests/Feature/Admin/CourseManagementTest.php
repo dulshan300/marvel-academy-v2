@@ -108,6 +108,26 @@ class CourseManagementTest extends TestCase
         $this->assertModelMissing($year11);
     }
 
+    public function test_subjects_can_be_limited_to_a_school_year_within_the_key_stage(): void
+    {
+        $course = Course::factory()->keyStage(KeyStage::Gcse)->create();
+        $component = Livewire::actingAs($this->admin)
+            ->test('pages::admin.courses.edit', ['course' => $course])
+            ->set('newSubjectName', 'Year 10')->set('newSubjectYear', 10)->call('addSubject')
+            ->assertHasNoErrors()
+            ->set('newSubjectName', 'Year 7')->set('newSubjectYear', 7)->call('addSubject')
+            ->assertHasErrors('newSubjectYear');
+
+        $subject = $course->subjects()->sole();
+        $this->assertSame(10, $subject->year_group);
+
+        $component->call('setSubjectYear', $subject->id, '8');
+        $this->assertSame(10, $subject->fresh()->year_group);
+
+        $component->call('setSubjectYear', $subject->id, '');
+        $this->assertNull($subject->fresh()->year_group);
+    }
+
     public function test_structure_editor_ignores_subjects_from_other_courses(): void
     {
         $course = Course::factory()->create();

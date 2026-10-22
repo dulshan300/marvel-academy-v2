@@ -78,6 +78,26 @@ class Child extends Model
     }
 
     /**
+     * Whether the child may use a topic: course access, and the topic is for their school year.
+     */
+    public function canAccessTopic(Topic $topic): bool
+    {
+        return $topic->loadMissing('subject')->subject->isForYearGroup($this->year_group)
+            && $this->canAccessCourse($topic->courseId());
+    }
+
+    /**
+     * Whether the child may join or watch a live session: course access, and
+     * the session's topic (if it has one) is for their school year.
+     */
+    public function canAccessSession(LiveSession $session): bool
+    {
+        return $session->topic_id === null
+            ? $this->canAccessCourse($session->course_id)
+            : $this->canAccessTopic($session->loadMissing('topic')->topic);
+    }
+
+    /**
      * Number of further courses the child's plan allows.
      */
     public function remainingCourseAllowance(): int

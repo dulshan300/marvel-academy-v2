@@ -41,6 +41,7 @@ new #[Layout('layouts::portal')] #[Title('My learning')] class extends Component
     {
         return LiveSession::query()
             ->whereIn('course_id', $this->courses->modelKeys())
+            ->forYearGroup($this->child->year_group)
             ->where('starts_at', '>=', now()->subHours(4))
             ->where('status', '!=', LiveSessionStatus::Cancelled)
             ->with('course', 'teacher', 'topic')
@@ -63,6 +64,7 @@ new #[Layout('layouts::portal')] #[Title('My learning')] class extends Component
             ->join('topics', 'topics.id', '=', 'quizzes.topic_id')
             ->join('subjects', 'subjects.id', '=', 'topics.subject_id')
             ->whereIn('subjects.course_id', $this->courses->modelKeys())
+            ->where(fn ($query) => $query->whereNull('subjects.year_group')->orWhere('subjects.year_group', $this->child->year_group))
             ->pluck('subjects.course_id', 'quizzes.id');
 
         $attempts = $this->child->quizAttempts()

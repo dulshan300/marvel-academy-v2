@@ -30,10 +30,12 @@ new #[Layout('layouts::portal')] #[Title('Timetable')] class extends Component
     #[Computed]
     public function sessions(): Collection
     {
-        $courseIds = auth()->user()->studentProfile?->activeCourses()->pluck('courses.id') ?? collect();
+        $child = auth()->user()->studentProfile;
+        $courseIds = $child?->activeCourses()->pluck('courses.id') ?? collect();
 
         return LiveSession::query()
             ->whereIn('course_id', $courseIds)
+            ->when($child, fn ($query) => $query->forYearGroup($child->year_group))
             ->whereBetween('starts_at', [$this->monthDate->copy()->startOfWeek(), $this->monthDate->copy()->endOfMonth()->endOfWeek()])
             ->orderBy('starts_at')
             ->get();

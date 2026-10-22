@@ -22,6 +22,21 @@ enum KeyStage: string
     /**
      * Typical UK school years covered by the key stage.
      */
+    /**
+     * School years in the key stage.
+     *
+     * @return array<int, int>
+     */
+    public function years(): array
+    {
+        return match ($this) {
+            self::Ks2 => range(3, 6),
+            self::Ks3 => range(7, 9),
+            self::Gcse => range(10, 11),
+            self::ALevel => range(12, 13),
+        };
+    }
+
     public function yearRange(): string
     {
         return match ($this) {

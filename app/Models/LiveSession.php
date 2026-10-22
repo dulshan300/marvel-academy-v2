@@ -75,6 +75,17 @@ class LiveSession extends Model
         return 'https://www.youtube-nocookie.com/embed/'.$matches[1];
     }
 
+    /**
+     * Sessions for a school year: those without a topic, or whose topic's subject is for that year.
+     */
+    #[Scope]
+    protected function forYearGroup(Builder $query, int $yearGroup): void
+    {
+        $query->where(fn (Builder $query) => $query
+            ->whereNull('topic_id')
+            ->orWhereHas('topic.subject', fn (Builder $query) => $query->forYearGroup($yearGroup)));
+    }
+
     #[Scope]
     protected function upcoming(Builder $query): void
     {

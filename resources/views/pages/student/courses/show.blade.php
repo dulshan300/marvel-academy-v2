@@ -27,12 +27,24 @@ new #[Layout('layouts::portal')] class extends Component
     }
 
     /**
+     * The year group of the signed-in student.
+     */
+    #[Computed]
+    public function yearGroup(): int
+    {
+        return auth()->user()->studentProfile->year_group;
+    }
+
+    /**
+     * Subjects for the student's school year (plus any open to every year).
+     *
      * @return Collection<int, \App\Models\Subject>
      */
     #[Computed]
     public function subjects(): Collection
     {
         return $this->course->subjects()
+            ->forYearGroup($this->yearGroup)
             ->with([
                 'topics.materials.media',
                 'topics.quizzes' => fn ($query) => $query->published()->withCount('questions'),
@@ -63,6 +75,7 @@ new #[Layout('layouts::portal')] class extends Component
     public function recordings(): Collection
     {
         return $this->course->liveSessions()
+            ->forYearGroup($this->yearGroup)
             ->whereNotNull('recording_url')
             ->where('starts_at', '<', now())
             ->latest('starts_at')
@@ -74,6 +87,12 @@ new #[Layout('layouts::portal')] class extends Component
 
 <div class="grid gap-8 xl:grid-cols-3">
     <div class="space-y-6 xl:col-span-2">
+        @if ($this->subjects->isEmpty())
+            <x-portal.card>
+                <p class="text-slate-600">There are no Year {{ $this->yearGroup }} topics in this course yet. Please check back soon.</p>
+            </x-portal.card>
+        @endif
+
         @foreach ($this->subjects as $subject)
             <x-portal.card :title="$subject->name" wire:key="subject-{{ $subject->id }}">
                 <div class="divide-y divide-slate-100">

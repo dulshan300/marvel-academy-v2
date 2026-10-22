@@ -9,13 +9,13 @@ use App\Models\User;
 class LiveSessionPolicy
 {
     /**
-     * Watch the stream or recording of a session in an accessible course.
+     * Watch the stream or recording of a session in an accessible course and school year.
      */
     public function watch(User $user, LiveSession $session): bool
     {
         return $session->status !== LiveSessionStatus::Cancelled
             && ($session->teacher_id === $user->id
-                || ($user->studentProfile?->canAccessCourse($session->course_id) ?? false));
+                || ($user->studentProfile?->canAccessSession($session) ?? false));
     }
 
     /**
