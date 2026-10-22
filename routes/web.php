@@ -2,6 +2,8 @@
 
 use App\Enums\Permission;
 use App\Enums\Role;
+use App\Http\Controllers\Admin\BackupDownloadController;
+use App\Http\Controllers\Admin\EmailPreviewController;
 use App\Http\Controllers\Admin\NewsletterExportController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\CourseController;
@@ -100,6 +102,16 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::livewire('/roles', 'pages::admin.roles.index')
             ->middleware('permission:'.Permission::ManageRoles->value)
             ->name('roles.index');
+
+        Route::middleware('permission:'.Permission::ManageEmails->value)->group(function () {
+            Route::livewire('/emails', 'pages::admin.emails.index')->name('emails.index');
+            Route::get('/emails/preview/{template}', EmailPreviewController::class)->name('emails.preview');
+        });
+
+        Route::middleware('permission:'.Permission::ManageBackups->value)->group(function () {
+            Route::livewire('/backups', 'pages::admin.backups.index')->name('backups.index');
+            Route::get('/backups/download', BackupDownloadController::class)->middleware('throttle:10,1')->name('backups.download');
+        });
     });
 
     Route::prefix('teacher')->name('teacher.')->middleware('role:'.Role::Teacher->value)->group(function () {
