@@ -22,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->redirectUsersTo(fn () => route('dashboard'));
+
+        $middleware->preventRequestForgery(except: [
+            'stripe/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

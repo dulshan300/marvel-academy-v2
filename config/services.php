@@ -14,6 +14,11 @@ return [
     |
     */
 
+    'billing' => [
+        // "stripe" in production; "local" simulates subscriptions without Stripe keys.
+        'driver' => env('BILLING_DRIVER', env('STRIPE_SECRET') ? 'stripe' : 'local'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

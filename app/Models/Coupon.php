@@ -24,6 +24,16 @@ class Coupon extends Model
         ];
     }
 
+    /**
+     * Find a coupon by its customer-facing code, ignoring case and spacing.
+     */
+    public static function findByCode(string $code): ?self
+    {
+        $code = mb_strtoupper(trim($code));
+
+        return $code === '' ? null : static::query()->where('code', $code)->first();
+    }
+
     public function isRedeemable(): bool
     {
         if (! $this->is_active) {

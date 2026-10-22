@@ -6,6 +6,8 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterUnsubscribeController;
+use App\Http\Controllers\Parent\BillingPortalController;
+use App\Http\Controllers\Parent\CheckoutSuccessController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,7 +63,13 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     Route::prefix('parent')->name('parent.')->middleware('role:'.Role::Parent->value)->group(function () {
-        Route::view('/', 'portal.placeholder', ['portal' => 'Parent'])->name('dashboard');
+        Route::livewire('/', 'pages::parent.dashboard')->name('dashboard');
+        Route::livewire('/children/create', 'pages::parent.children.create')->name('children.create');
+        Route::livewire('/children/{child}/subscribe', 'pages::parent.children.subscribe')->name('children.subscribe');
+        Route::livewire('/children/{child}/courses', 'pages::parent.children.courses')->name('children.courses');
+        Route::livewire('/billing', 'pages::parent.billing')->name('billing');
+        Route::get('/billing/portal', BillingPortalController::class)->name('billing.portal');
+        Route::get('/checkout/{child}/success', CheckoutSuccessController::class)->name('checkout.success');
     });
 
     Route::prefix('student')->name('student.')->middleware('role:'.Role::Student->value)->group(function () {

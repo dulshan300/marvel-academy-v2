@@ -24,6 +24,20 @@ class User extends Authenticatable
     use Billable, HasFactory, HasPublicUlid, HasRoles, Notifiable;
 
     /**
+     * Cashier reads these before a customer exists, including on freshly
+     * created users that have not been reloaded from the database.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_active' => true,
+        'stripe_id' => null,
+        'pm_type' => null,
+        'pm_last_four' => null,
+        'trial_ends_at' => null,
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -64,7 +78,7 @@ class User extends Authenticatable
      */
     public function children(): HasMany
     {
-        return $this->hasMany(Child::class, 'parent_id');
+        return $this->hasMany(Child::class, 'parent_id')->chaperone('parent');
     }
 
     /**

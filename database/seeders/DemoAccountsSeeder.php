@@ -2,12 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Billing\LocalBillingGateway;
 use App\Enums\EnrolmentStatus;
 use App\Enums\KeyStage;
 use App\Enums\Role;
 use App\Models\Child;
 use App\Models\Course;
 use App\Models\LiveSession;
+use App\Models\Plan;
 use App\Models\TeacherProfile;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -89,6 +91,13 @@ class DemoAccountsSeeder extends Seeder
                 'teacher_id' => $teacher->id,
                 'title' => "{$course->title}: introduction",
             ]);
+        }
+
+        $plan = Plan::where('slug', 'two-subjects')->first();
+        $child->plan()->associate($plan)->save();
+
+        if ($plan !== null && config('services.billing.driver') === 'local' && ! $child->hasActiveSubscription()) {
+            app(LocalBillingGateway::class)->startSubscription($child, $plan, null, '/', '/');
         }
     }
 

@@ -14,9 +14,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Cashier\Subscription;
 
 #[Table('children')]
-#[Fillable(['parent_id', 'student_id', 'first_name', 'last_name', 'date_of_birth', 'key_stage', 'year_group', 'school_name', 'notes'])]
+#[Fillable(['parent_id', 'student_id', 'plan_id', 'first_name', 'last_name', 'date_of_birth', 'key_stage', 'year_group', 'school_name', 'notes'])]
 class Child extends Model
 {
     /** @use HasFactory<ChildFactory> */
@@ -28,6 +29,52 @@ class Child extends Model
             'date_of_birth' => 'date',
             'key_stage' => KeyStage::class,
         ];
+    }
+
+    /**
+     * Key stage a UK school year group belongs to.
+     */
+    public static function keyStageForYear(int $yearGroup): KeyStage
+    {
+        return match (true) {
+            $yearGroup <= 6 => KeyStage::Ks2,
+            $yearGroup <= 9 => KeyStage::Ks3,
+            $yearGroup <= 11 => KeyStage::Gcse,
+            default => KeyStage::ALevel,
+        };
+    }
+
+    /**
+     * Name of this child's subscription on the parent's billing account.
+     */
+    public function subscriptionType(): string
+    {
+        return 'child-'.$this->ulid;
+    }
+
+    public function subscription(): ?Subscription
+    {
+        return $this->parent->subscription($this->subscriptionType());
+    }
+
+    /**
+     * Whether the child's plan is active, trialling or in its cancellation grace period.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->parent->subscribed($this->subscriptionType());
+    }
+
+    /**
+     * Number of further courses the child's plan allows.
+     */
+    public function remainingCourseAllowance(): int
+    {
+        if ($this->plan === null) {
+            return 0;
+        }
+
+        return max(0, $this->plan->subjects_included - $this->activeCourses()->count());
     }
 
     /**
@@ -44,6 +91,14 @@ class Child extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    /**
+     * @return BelongsTo<Plan, $this>
+     */
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
     }
 
     /**
