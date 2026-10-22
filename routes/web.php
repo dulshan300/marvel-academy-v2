@@ -2,6 +2,7 @@
 
 use App\Enums\Permission;
 use App\Enums\Role;
+use App\Http\Controllers\Admin\NewsletterExportController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
@@ -72,6 +73,30 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::livewire('/sessions/create', 'pages::admin.sessions.edit')->name('sessions.create');
             Route::livewire('/sessions/{session}/edit', 'pages::admin.sessions.edit')->name('sessions.edit');
         });
+
+        Route::middleware('permission:'.Permission::ManageFamilies->value)->group(function () {
+            Route::livewire('/families', 'pages::admin.families.index')->name('families.index');
+            Route::livewire('/families/{parent}', 'pages::admin.families.show')->name('families.show');
+        });
+
+        Route::middleware('permission:'.Permission::ManageTeachers->value)->group(function () {
+            Route::livewire('/teachers', 'pages::admin.teachers.index')->name('teachers.index');
+            Route::livewire('/teachers/create', 'pages::admin.teachers.edit')->name('teachers.create');
+            Route::livewire('/teachers/{teacher}/edit', 'pages::admin.teachers.edit')->name('teachers.edit');
+        });
+
+        Route::livewire('/payments', 'pages::admin.payments.index')
+            ->middleware('permission:'.Permission::ManagePayments->value)
+            ->name('payments.index');
+
+        Route::middleware('permission:'.Permission::ManageContent->value)->group(function () {
+            Route::livewire('/content', 'pages::admin.content.index')->name('content.index');
+            Route::get('/newsletter/export', NewsletterExportController::class)->name('newsletter.export');
+        });
+
+        Route::livewire('/roles', 'pages::admin.roles.index')
+            ->middleware('permission:'.Permission::ManageRoles->value)
+            ->name('roles.index');
     });
 
     Route::prefix('teacher')->name('teacher.')->middleware('role:'.Role::Teacher->value)->group(function () {
